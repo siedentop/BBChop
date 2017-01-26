@@ -26,8 +26,10 @@ TESTS = \
 all: $(TESTS)
 	echo "ALL PASSED"
 
+clean: $(TESTS)
+	rm $^
 RUNPY=python
 
 
 %.test: %.py
-	$(RUNPY) $<
+	$(RUNPY) $< && touch $@
