@@ -15,7 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with BBChop.  If not, see <http://www.gnu.org/licenses/>.
 
-import numberType
+from . import numberType
 
 # standard beta function
 
@@ -93,16 +93,16 @@ def pe(f,ds,ts,r,i):
     if dx>0:
         return 0
     p=1.0
-    for x in xrange(i,len(ds)):
+    for x in range(i,len(ds)):
         p=p*f(ds[x],ds[x]+ts[x],r) 
     return p
     
         
 #FIXME why is t1(nD)==t1(binD)?
 def t1(f,ds,ts,r):
-    pl=[pe(f,ds,ts,r,x) for x in xrange(len(ds))]
+    pl=[pe(f,ds,ts,r,x) for x in range(len(ds))]
     pt=sum(pl)
-    return [pl[x]/pt for x in xrange(len(ds))]
+    return [pl[x]/pt for x in range(len(ds))]
     
 
 def powList(l,p):

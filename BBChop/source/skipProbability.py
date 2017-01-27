@@ -1,5 +1,5 @@
-import numberType
-import listUtils
+from . import numberType
+from . import listUtils
 
 def skipProbsSimple(skipped,dag):
 
@@ -50,6 +50,6 @@ class skipProbsDecay:
         upto  = myDag.combUpto(initial,self.combFunc)
         after = myDag.combAfter(initial,self.combFunc)
         
-        res = [max(initial[i],upto[i],after[i]) for i in xrange(len(skipped))]
+        res = [max(initial[i],upto[i],after[i]) for i in range(len(skipped))]
         return res
         
