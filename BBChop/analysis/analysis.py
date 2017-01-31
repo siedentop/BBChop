@@ -1,84 +1,62 @@
-from random import random, seed
-#from functools import lru_cache  # TODO works only in python 3.
+from multiprocessing import Pool, cpu_count
+from itertools import product
 
-from BBChop.BBChop import BBChop
-from BBChop import likelihoods, dag
-
-class Runner:
-    def __init__(self, first_failure_location, failure_rate):
-        self.fail_loc = first_failure_location
-        self.trials = 0
-        self.p = failure_rate
-        
-        
-    def test(self, where):
-        ''' Test at given location. '''
-        self.trials += 1
-        if where >= self.fail_loc:
-            return self.p > random()
-        else:
-            return False
-      
-
-    def switch(self, where):
-        ''' Switch test location '''
-        pass
-    def statusCallback(self, ended, mostLikely, mostLikelyProbs, probs, counts):
-        '''
-        ended: True if testing is done.
-        mostLikely: most likely location
-        mostLikelyProbs: probability at most likely location
-        '''
-        #print("Status [{}, {}, {}]".format(ended, mostLikely, mostLikelyProbs))
-        pass
+from experiment import run_experiment
 
 
-
-#@lru_cache(maxsize=32)
-def run_experiment(N, certainty, fail_loc, fail_prob, _seed):
-    ''' Runs experiment and returns tuples of facts.
-    Those are (loc_found, loc_correct, num_trials)
+def dict_product(**kwargs):
+    ''' A generator that procudes the cartesian product over the
+    inputs as a dictionary each.
     '''
-    seed(_seed)
-    prior = [ 1. / float(N) for i in range(N)]
-    runner = Runner(fail_loc, fail_prob)
-
-    finder = BBChop(prior, certainty, runner,
-                    likelihoods.singleRateCalc,
-                    dag.listDag())
-
-    where = finder.search()
-    return (where, fail_loc == where, runner.trials)
+    keys = kwargs.keys()
+    values = kwargs.values()
+    for elem in product(*values):
+        yield dict( zip(keys, elem) )
 
 def generate_plot(n):
     ''' Generate plot '''
-    assert(n == 1)
-    N = 100
-    certainty = 0.9
-    fail_loc = int(N * 0.7)
 
     data = []
-    for fail_prob in [1., .9, .5, .25, .1, 0.05, 0.01   ]:
-        print('Running at p={}'.format(fail_prob))
-        (where, success, trials) = run_experiment(N, certainty, fail_loc, fail_prob, 1)
-        if not success:
-            print('Failed with {}'.format(fail_prob))
-        data.append((fail_prob, trials))
+    configs = dict_product(N=[10, 100, 1000],
+                           fail_prob=[1., .9, .5, .25, .1, 0.01, 0.005],
+                           certainty=[0.9, 0.7],
+                           fail_loc_func = [lambda N : int(N * 0.7), lambda N : int(N * 0.5)],
+                           seed=[1, 2, 3])
 
+    def apply_fail_loc_fun(gen):
+        for d in gen:
+            try:
+                d['fail_loc'] = d['fail_loc_func'](d['N'])
+                del d['fail_loc_func']
+            except KeyError:
+                pass
+            yield d
+    configs = apply_fail_loc_fun(configs)
+    
+    c = next(configs)
+    data = run_experiment(**c)
 
-    import numpy as np
-    import matplotlib.pyplot as plt
+    with Pool(cpu_count()) as p:
+        data = p.map(run_experiment, configs)
 
-    probs, trials = zip(*data)
-    plt.plot(probs, trials)
-    plt.title('semilogx')
-    plt.grid(True)
-    plt.show()
+    try:
+        import numpy as np
+        import matplotlib.pyplot as plt
+        import pandas as pd
 
+        data_frame = pd.DataFrame(data)  # Try pd.DataFrame.from_records(d) with >0.16.2
+        print(data_frame)
 
-    #print('Found at {where} ({true}) after {trials} trials.'.format(
-           #where=where, true=fail_loc, trials=trials))
+        probs =  data_frame['fail_prob']
+        trials = data_frame['trials']
+        plt.loglog(probs, trials)
+        plt.title('semilogx')
+        plt.grid(True)
+        plt.show()
+    except ImportError:
+        import json
+        with open('analysis.json', 'w') as fp:
+            json.dump(data, fp)
 
 if __name__ == '__main__':
-    seed(1)
     generate_plot(1)
