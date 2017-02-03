@@ -50,7 +50,7 @@ class Annotator:
 archiver = file_archive('cache_analysis.pkl', cached=False)
 km = keymap()
 
-@lru_cache(maxsize=1024, cache=archiver, keymap=km)
+@lru_cache(maxsize=4096, cache=archiver, keymap=km)
 def run_experiment(*args, **kwargs):
     ''' Runs experiment and returns tuples of facts.
     Those are (loc_found, loc_correct, num_trials)
