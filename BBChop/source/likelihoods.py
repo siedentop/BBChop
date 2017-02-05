@@ -16,7 +16,7 @@
 #    along with BBChop.  If not, see <http://www.gnu.org/licenses/>.
 
 from . import numberType
-from .miscMath import Beta,fact,choice,powList
+from .miscMath import Beta,fact,choice,powList,logBeta
 from .listUtils import *
 
 debug=False
@@ -43,25 +43,70 @@ def g(pred,Ti,Di,Lprior):
         #print(pred, Ti, Di, Lprior, Beta(Di+1,Ti+1)*Lprior)
         
         return Beta(Di+1,Ti+1)*Lprior
-    
-def probsFromLikelihoods(likelihoods,likelihoodTot):
+
+def glog(pred, Ti, Di, Lprior):
+    if pred:
+        return -1 * numberType.inf
+    else:
+        lnB = logBeta(Di+1, Ti+1)
+        lnP = numberType.log(Lprior)
+        return lnB + lnP
+
+def whuber(log_i, log_n, eps, n):
+         ''' Computes alpha_i from whuber's method.
+             From http://stats.stackexchange.com/a/66621
+
+             log_i: Logarithm i.
+             log_n: Logarithm n, where n is largest element.
+             eps: required precision.
+             n: Number of elements in series
+         '''
+         if log_i - log_n >= numberType.log(eps) - numberType.log(n):
+             return numberType.exp(log_i - log_n)
+         else:
+             return 0
+
+def normalise_likelihoods(logs):
+    ''' Apply whuber's algorithm on 'logs' '''
+    log_max = max(logs)
+    n = len(logs)
+    eps = 1e-16  # about the precision of IEEE 754
+
+    return [ whuber(l, log_max, eps, n) for l in logs ]
+
+
+def probsFromLikelihoods(likelihoods,likelihoodTot, log_likelihoods):
     #normalise locProbs
     probs=[]
 
+
+    '''
+    From http://stats.stackexchange.com/a/66621
+    '''
+    eps = 1e-16
+    if likelihoodTot < eps:
+        likelihoods = normalise_likelihoods(log_likelihoods)
+        # 'To avoid too much rounding error, compute the sum starting with '
+        # 'the smallest values of the α_i.' (ibid.) [Only relevant for large N.]
+        likelihoodTot = sum(sorted(likelihoods))
+        print(likelihoods, likelihoodTot)
+
+
+    # NOTE: Broken, doesn't work.
     if all([l is Zero for l in likelihoods]):
         raise Impossible
-    
+
     for li in likelihoods :
         probs.append(li/likelihoodTot)
     return probs
-        
+
 # returns a posteriori P(L|E) and a priori P(E) (that is, P(E|L) marginalised over L)
-def probs(counts,locPrior,likelihoodsFunc,dag,doprint=None):    
-    (ls,lsTot,junk)=likelihoodsFunc(counts,locPrior,dag)
+def probs(counts,locPrior,likelihoodsFunc,dag,doprint=None):
+    (ls,lsTot,junk, ls_log)=likelihoodsFunc(counts,locPrior,dag)
     if debug: print("al",ls)
     if doprint!=None:
         print(doprint,ls)
-    probs=probsFromLikelihoods(ls,lsTot)
+    probs=probsFromLikelihoods(ls,lsTot, ls_log)
     return (probs,lsTot)
 
 # NB: these are not technically likelihoods, because they include the prior.
@@ -101,6 +146,7 @@ def singleRate(counts,locPrior,dag):
 
     #calculate likelihoods
     gs=[]
+    gslog = []
     gsFound=[]
     gsNFound=[]
     gtot=0
@@ -110,12 +156,13 @@ def singleRate(counts,locPrior,dag):
         gn=g(preds[i],Ts[i]+1,Ds[i],  locPrior[i])
         gtot+=gi
         gs.append(gi)
+        gslog.append(glog(preds[i], Ts[i], Ds[i], locPrior[i]))
         gsFound.append(gf)
         gsNFound.append(gn)
 
-    
 
-    return (gs,gtot,(gsFound,gsNFound))
+
+    return (gs,gtot,(gsFound,gsNFound), gslog)
 
 def gMulti(pred,beta,Lprior):
     if pred:
