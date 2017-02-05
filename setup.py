@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
+
 
 setup(name='BBChop',
       version='1.0',
@@ -11,4 +12,3 @@ setup(name='BBChop',
       package_dir = {'BBChop': 'BBChop/source'},
       scripts = ['BBChop/source/bbchop'],
      )
-
