@@ -44,7 +44,7 @@ class collStats:
             yi=self.names[y]
 
             key=tuple(key)
-            if not collated.has_key(key):
+            if key not in collated:
                 collated[key]=[]
 
             term={'x':datum[xi],'y':datum[yi]}
@@ -57,13 +57,13 @@ def combYs(terms,comb,errcomb=None):
     for term in terms:
         x=term['x']
         y=term['y']
-        if not xind.has_key(x):
+        if x not in xind:
             xind[x]=[]
         xind[x].append(y)
         
 
     xlist=[]
-    for (x,ys) in xind.iteritems():
+    for (x,ys) in xind.items():
         if errcomb is not None:
             xlist.append((x,comb(ys),errcomb(ys)))
         else:
@@ -75,7 +75,7 @@ def combYs(terms,comb,errcomb=None):
             
 def collAllStats(stats,comb,errcomb=None):
     res={}
-    for (k,terms) in stats.iteritems():
+    for (k,terms) in stats.items():
         c=combYs(terms,comb,errcomb)
         res[k]=c
     return res

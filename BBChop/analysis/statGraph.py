@@ -15,13 +15,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with BBChop.  If not, see <http://www.gnu.org/licenses/>.
 
-import collStats
+from . import collStats
 from pylab import *
 import numpy
 import os
 import math
-import statDb
-from analysisRanges import *
+from . import statDb
+from .analysisRanges import *
 
 namesList=("rate","loc","N","cert","tests","guess","right","lname","lastcountT","lastCountD","seed")
 names={}
@@ -42,7 +42,7 @@ def getStatsOld(fileName):
 
 def getStats(matchList):
     data=[]
-    for (k,v) in statDb.iteritems():
+    for (k,v) in statDb.items():
 
         (rate,loc,N,cert,lastCountT,lastCountD,lname,seed)=k
         (tests,guess,right)=v
@@ -72,16 +72,16 @@ s7=getStats(m7)
 
 def plots(pfunc,s,atitle,x,y,nonKey,ycomb,legloc,fname,labfn,errcomb=None,axisArgs=None,**kwargs):
     if os.access(fname,os.F_OK):
-        print fname,"exists"
+        print(fname,"exists")
     else:
-        print "writing ",fname
+        print("writing ",fname)
         g1=s.collate(x,y,nonKey)
         g1c=collStats.collAllStats(g1,ycomb,errcomb)
         
         title(atitle)
         xlabel(x)
         ylabel(y)
-        for (key,data) in g1c.iteritems():
+        for (key,data) in g1c.items():
             xs=[d[0] for d in data]
             ys=[d[1] for d in data]
             if errcomb is not None:

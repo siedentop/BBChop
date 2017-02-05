@@ -18,8 +18,8 @@
 
 import sys
 
-print sys.argv[1]
-instr=raw_input("exit code? ")
+print(sys.argv[1])
+instr=input("exit code? ")
 sys.exit(int(instr))
 
 

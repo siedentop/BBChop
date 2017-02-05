@@ -19,10 +19,10 @@ import random
 import pdb
 from BBChop import likelihoods
 from BBChop import dag
-import testCases
-import randomdag
+from . import testCases
+from . import randomdag
 
-from testDetector import detect
+from .testDetector import detect
 
 random.seed(1)
 
@@ -62,16 +62,16 @@ def testChop(likelihoodObj,randomDag,falseNeg,multi):
             wrong.append(guess)
     
         #if((k+1)%10 == 0):
-        print "test ",k," right%=",100.0*right/(k+1),"right=",loc==guess,"totallooks=",totalLooks/(k+1),"looks=",finder.total,"rate=",rate
+        print("test ",k," right%=",100.0*right/(k+1),"right=",loc==guess,"totallooks=",totalLooks/(k+1),"looks=",finder.total,"rate=",rate)
             
         #if((k+1)%100 ==0):
         #   tester.printLocs()
 	
-    print "right:",right," out of",trials,tests/trials
+    print("right:",right," out of",trials,tests/trials)
     return (float(right)/trials)<cert
 
 def testFunc(case):
-    print "testing " ,case.likelihoodObj.name(),"randomDag=",case.randomDag
+    print("testing " ,case.likelihoodObj.name(),"randomDag=",case.randomDag)
     
     return testChop(case.likelihoodObj,case.randomDag,case.falseNeg,case.multi)
 

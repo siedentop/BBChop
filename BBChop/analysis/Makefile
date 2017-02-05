@@ -18,7 +18,7 @@
 
 all: run_time
 
-RUNPY=python
+RUNPY=python3
 
 run_time:
 	mkdir -p data

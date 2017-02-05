@@ -14,7 +14,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with BBChop.  If not, see <http://www.gnu.org/licenses/>.
-import randomdag
+from . import randomdag
 import random
 from BBChop import dagRead
 
@@ -40,10 +40,10 @@ try:
             if dagTerm not in dagCheck:
                 raise "missing term"
             dagCheck=[x for x in dagCheck if x!=dagTerm]
-        print "test %d passed" %(test)
+        print("test %d passed" %(test))
 except:
-    print "FAILED"
+    print("FAILED")
     exit(1)
 
-print "PASSED"
+print("PASSED")
 exit(0)

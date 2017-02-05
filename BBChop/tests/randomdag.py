@@ -17,7 +17,7 @@
 import random
 from BBChop import dag
 import copy
-import dagAlg
+from . import dagAlg
 
 #return a random connected dag with unique top and bottom
 
@@ -25,9 +25,9 @@ tailWeight=0.2
 branchWeight=0.6
 
 def sortDec(d,i,j):
-    if d.has_key((i,j)):
+    if (i,j) in d:
         return -1
-    elif d.has_key((j,i)):
+    elif (j,i) in d:
         return 1
     else:
         return 0
@@ -87,7 +87,7 @@ class rdag:
             select=[random.randint(0,1) for i in self.nodes[two]]
             if sum(select)==0:
                 select[random.randint(0,len(select)-1)]=1
-            for i in reversed(range(len(select))):
+            for i in reversed(list(range(len(select)))):
                 if not select[i]:
                     self.movechild(two,one,i)
         
@@ -95,7 +95,7 @@ class rdag:
     def sort(self):
 
         index=[]
-        rest=range(len(self.nodes))
+        rest=list(range(len(self.nodes)))
 
 
         # dumb selection sort
@@ -120,11 +120,11 @@ class rdag:
 def printRel(r,N):
     for i in range(N):
         for j in range(N):
-            if r.has_key((i,j)):
-                print "1",
+            if (i,j) in r:
+                print("1", end=' ')
             else: 
-                print "0",
-        print 
+                print("0", end=' ')
+        print() 
 
                
 
@@ -170,4 +170,4 @@ if __name__=='__main__':
     random.seed(1)
     r=randomdag(10)
     
-    print r
+    print(r)

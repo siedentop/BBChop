@@ -19,13 +19,13 @@ import BBChop
 import random
 import pdb
 from BBChop import likelihoods
-import dag
+from BBChop import dag
 import sys
 import math
 import time
 import copy
 import os
-from testDetector import detect
+from tests.testDetector import detect
 import statDb
 
 from analysisRanges import *
@@ -71,7 +71,7 @@ def makeStat(seed,rate=None,minRate=None,maxRate=None,N=None,prior=None,cert=Non
         finder.restoreCheckpoint(prior,copy.copy(counts))
     
     key=(rate,loc,N,cert,counts[-1][0],counts[-1][1],likelihoodObj.name().strip(),seed)
-    if statDb.has_key(key):
+    if key in statDb:
         (tests,guess,right)=statDb.get(key)
         sys.stdout.write('.')
         sys.stdout.flush()
@@ -100,7 +100,7 @@ class getAvgTests:
         self.sd=10
         self.seed=1
 
-    def next(self):
+    def __next__(self):
         random.seed(self.seed)
         self.seed+=1
         (rate,loc,N,cert,tests,guess,right,lname,lastcount)=makeStat(self.seed,**self.kwargs)
@@ -135,11 +135,11 @@ def makeStats(NRange,rateCountList,certRange,each,likelihoodObjs):
                     a=getAvgTests(5,N=Nval,rate=rate,cert=certVal,likelihoodObj=likelihoodObj,counts=counts)
                     
                     for i in range(each):
-                        a.next()
-                    print
+                        next(a)
+                    print()
                     
            
-                print "took",time.clock()-start,"seconds"
+                print("took",time.clock()-start,"seconds")
                     
 
 
