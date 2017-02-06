@@ -167,7 +167,7 @@ class dagX(absDag):
     def combAfterLinear(self,values,comb):
         res=[comb([])]*len(values)
 
-        for i in reversed(range(len(values))):
+        for i in reversed(list(range(len(values)))):
             if not self.linearEnd[i]:
                 res[i]=comb([comb([values[j],res[j]]) for j in self.children[i]])
         return res
@@ -207,7 +207,7 @@ class dagX(absDag):
     def combAfter(self,values,comb):
         res=[comb([])]*len(values)
         
-        for i in reversed(range(len(values))):
+        for i in reversed(list(range(len(values)))):
             res[i]=comb([comb([values[j],res[j]]) for j in self.children[i]])
         return res
 

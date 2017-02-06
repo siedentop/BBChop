@@ -38,12 +38,12 @@ def findMax(alist):
     return (w,p)
 
 def listComb(comb,*args):
-    r=range(len(args[0]))
+    r=list(range(len(args[0])))
     
     return [comb([arg[i] for arg in args]) for i in r]
 
 def listComb1(op,comb,first,*args):
-    r=range(len(args[0]))
+    r=list(range(len(args[0])))
     
     return [op(first[i],comb([arg[i] for arg in args])) for i in r]
 

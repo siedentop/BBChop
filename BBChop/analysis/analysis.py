@@ -77,3 +77,4 @@ if __name__ == '__main__':
                         help='A list of hosts')
     args = parser.parse_args()
     save_configs(args.hosts, get_configs())
+

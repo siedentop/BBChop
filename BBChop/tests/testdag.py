@@ -15,8 +15,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with BBChop.  If not, see <http://www.gnu.org/licenses/>.
 import sys
-import randomdag
-import dumbdag
+
+from . import randomdag
+from . import dumbdag
 from BBChop import dag
 import random
 
@@ -39,10 +40,10 @@ class tester:
         res_test=getattr(self.test,meth)(*args)
 
         if res_ref!=res_test:
-            print "fail at %d, %s" % (num,meth)
+            print("fail at %d, %s" % (num,meth))
             return True
         else:
-            print "passed  %d, %s" % (num,meth)
+            print("passed  %d, %s" % (num,meth))
             return False
         
     
@@ -68,9 +69,9 @@ for i in range(numTests):
     fail=fail or thisfail
 
 if fail:
-    print "FAILED"
+    print("FAILED")
     sys.exit(1)
 else:
-    print "PASSED"
+    print("PASSED")
     sys.exit(0)
     

@@ -19,14 +19,14 @@ import sys
 from BBChop import likelihoods
 import copy
 import random
-import randomdag
+from . import randomdag
 from BBChop import dag
 from BBChop.listUtils import cond,listOr
 from BBChop import numberType
 
 class struct:
     def __init__(self,**kwargs):
-        for (key,val) in kwargs.items():
+        for (key,val) in list(kwargs.items()):
             self.__dict__[key] = val
 
     
@@ -72,9 +72,9 @@ def runTests(testFunc,casesFunc):
             tfail= testFunc(case)
             fail=fail or tfail 
             if fail:
-                print "->FAILED"
+                print("->FAILED")
             else:
-                print "->PASSED"
+                print("->PASSED")
 
     else:
         testNum=int(sys.argv[1])
@@ -86,10 +86,10 @@ def runTests(testFunc,casesFunc):
     
     
     if fail:
-        print "FAILED!"
+        print("FAILED!")
         sys.exit(1)
     else:
-        print "PASSED!"
+        print("PASSED!")
         sys.exit(0)
 
 

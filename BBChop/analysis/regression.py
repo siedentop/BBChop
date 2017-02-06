@@ -41,3 +41,7 @@ likelihoods.probs(counts, locPrior, likelihoods.singleRate ,d)
 
 
 print n
+# Following line crashes with bug present
+likelihoods.probs(counts, locPrior, likelihoods.singleRate ,d)
+
+print(n)

@@ -15,7 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with BBChop.  If not, see <http://www.gnu.org/licenses/>.
 
-import anydbm
+import dbm
 import pickle
 
 filename="data/statsdb"
@@ -25,10 +25,10 @@ global theDB
 
 def open():
     global theDB
-    theDB=anydbm.open(filename,"w")
+    theDB=dbm.open(filename,"w")
 def create():
     global theDB
-    theDB=anydbm.open(filename,"c")
+    theDB=dbm.open(filename,"c")
 
 
 
@@ -41,9 +41,9 @@ def add(key,value):
 def get(key):
     return pickle.loads(theDB[pickle.dumps(key)])
 def has_key(key):
-    return theDB.has_key(pickle.dumps(key))
+    return pickle.dumps(key) in theDB
 
 def iteritems():
     global theDB
-    for (key,value) in theDB.iteritems():
+    for (key,value) in theDB.items():
         yield (pickle.loads(key),pickle.loads(value))

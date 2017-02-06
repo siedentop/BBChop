@@ -14,7 +14,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with BBChop.  If not, see <http://www.gnu.org/licenses/>.
-import dagAlg
+from . import dagAlg
 from BBChop.listUtils import listSub,prod
 # class for computing over directed acyclic graphs.
 # values are held outside the graph object, in lists
@@ -74,14 +74,14 @@ class dag(absDag):
 
     # for each location, return the sum of lower locations from values
     def combUpto(self,values,comb):
-        res=[comb([v for (i,v) in enumerate(values) if self.decendentRel.has_key((i,j))]) for j in range(len(values))]
+        res=[comb([v for (i,v) in enumerate(values) if (i,j) in self.decendentRel]) for j in range(len(values))]
 
         return res
 
 
     # for each location, return the sum of higher locations from values
     def combAfter(self,values,comb):
-        res=[comb([v for (i,v) in enumerate(values) if self.decendentRel.has_key((j,i))]) for j in range(len(values))]
+        res=[comb([v for (i,v) in enumerate(values) if (j,i) in self.decendentRel]) for j in range(len(values))]
         return res
 
 

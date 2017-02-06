@@ -140,7 +140,7 @@ class BBChop:
             self.counts[location]=(t+1,d)
             
         if debug:
-            print("ct",self.counts)
+            print(("ct",self.counts))
         
 
     def search(self):
@@ -177,6 +177,7 @@ class BBChop:
                 print("lp",list(map(float,locProbs)))
                 print("e",float(entropy(locProbs)),list(map(float,entropyResults)))
                 print("fp",list(map(float,findProbs)))
+
                 
             (whereabouts,maxp) = findMax(locProbs)
 

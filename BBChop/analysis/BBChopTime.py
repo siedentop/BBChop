@@ -28,7 +28,7 @@ random.seed(1)
 
 mult=100
 
-out=file("data/N_T.singleRate.csv","w")
+out=open("data/N_T.singleRate.csv","w")
 for n in range(50,1000,50):
 
 
@@ -44,8 +44,6 @@ for n in range(50,1000,50):
         junk=evidence.entropiesFast(counts,locPrior,likelihoods.singleRateCalc,d)
         end=time.clock()
         out.write("%d,%f\n" % (n,(end-start)))
-    print n
+    print(n)
 
 out.close()
-                  
-
