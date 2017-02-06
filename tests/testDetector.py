@@ -66,9 +66,7 @@ class detect:
             
 
     def printLocs(self):
-        for l in self.locs:
-            print(l, end=' ')
-        print() 
+        print(self.locs)
 
 
     def statusCallback(self,ended,mostLikely,mostLikelyProb,probs,counts):

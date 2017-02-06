@@ -61,30 +61,28 @@ def BBChopTestCases():
 
 
 def runTests(testFunc,casesFunc):
-    
     fail=False
 
-        
-    if len(sys.argv)==1:
-        
-    #    for (l1,l2,falsePos,falseNeg,maxCount,randomDag) in testTab:
-        for case in casesFunc():
-            tfail= testFunc(case)
-            fail=fail or tfail 
+    tests = casesFunc()
+
+    # If specified on command line, run only one test.
+    # This should be an input to this function, and use argparse
+    try:
+        testNum = int(sys.argv[1])
+        tests = [tests[testNum]]
+    except ValueError:
+        testNum = None
+
+    # for (l1,l2,falsePos,falseNeg,maxCount,randomDag) in testTab:
+    for case in casesFunc():
+        tfail = testFunc(case)
+        fail = fail or tfail
+        if testNum is not None:
             if fail:
                 print("->FAILED")
             else:
                 print("->PASSED")
 
-    else:
-        testNum=int(sys.argv[1])
-        testTab=[t for t in  casesFunc()]
-        case=testTab[testNum]
-        tfail=  testFunc(case)
-    
-        fail=fail or tfail 
-    
-    
     if fail:
         print("FAILED!")
         sys.exit(1)
@@ -128,4 +126,3 @@ def randomEntropyData(seed,N,dag,falsePos=False,falseNeg=False,maxCount=10):
     locPrior=[numberType.const(i/norm) for i in UlocPrior]
     
     return (counts,locPrior)
-
