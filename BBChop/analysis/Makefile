@@ -16,11 +16,16 @@
 #    along with BBChop.  If not, see <http://www.gnu.org/licenses/>.
 
 
-all: run_time
+all: plots/timeplot.svg
 
 topdir = $(shell (cd ../; pwd))
 RUNPY=PYTHONPATH=$(topdir)/source/ python
 
-run_time:
+mkdirs:
+	mkdir -p data plots
+
+data/N_T.singleRate.csv: BBChopTime.py mkdirs
 	$(RUNPY) BBChopTime.py
 
+plots/timeplot.svg: data/N_T.singleRate.csv timePlot.py
+	$(RUNPY) timePlot.py
