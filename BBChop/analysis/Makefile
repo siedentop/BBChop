@@ -29,3 +29,6 @@ data/N_T.singleRate.csv: BBChopTime.py mkdirs
 
 plots/timeplot.svg: data/N_T.singleRate.csv timePlot.py
 	$(RUNPY) timePlot.py
+
+makeStats data/statsdb: makeStats.py statDb.py
+	$(RUNPY) makeStats.py

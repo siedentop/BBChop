@@ -25,8 +25,9 @@ import math
 import time
 import copy
 import os
-from testDetector import detect
+from tests.testDetector import detect
 import statDb
+import anydbm
 
 from analysisRanges import *
 
@@ -41,7 +42,7 @@ maxLen=5000
 
 
 def makeStat(seed,rate=None,minRate=None,maxRate=None,N=None,prior=None,cert=None,likelihoodObj=None,dagObj=None,counts=None):
-    
+
 
     if rate is None:
         if minRate is None:
@@ -65,17 +66,18 @@ def makeStat(seed,rate=None,minRate=None,maxRate=None,N=None,prior=None,cert=Non
 
     tester=detect(N,rate,dagObj,dagObj is likelihoods.multiRateCalc)
     finder=BBChop.BBChop(prior,cert,tester,likelihoodObj,dagObj)
-    
+
     loc=tester.loc
-    if counts is not None:
-        finder.restoreCheckpoint(prior,copy.copy(counts))
-    
+    # TODO: restoreCheckpoint does not exist.
+    # if counts is not None:
+    #     finder.restoreCheckpoint(prior,copy.copy(counts))
+
     key=(rate,loc,N,cert,counts[-1][0],counts[-1][1],likelihoodObj.name().strip(),seed)
     if statDb.has_key(key):
         (tests,guess,right)=statDb.get(key)
         sys.stdout.write('.')
         sys.stdout.flush()
-        
+
     else:
         guess=finder.search()
         right=(loc==guess)
@@ -131,22 +133,24 @@ def makeStats(NRange,rateCountList,certRange,each,likelihoodObjs):
 
                 start=time.clock()
                 for certVal in certRange:
-                    
+
                     a=getAvgTests(5,N=Nval,rate=rate,cert=certVal,likelihoodObj=likelihoodObj,counts=counts)
-                    
+
                     for i in range(each):
                         a.next()
                     print
-                    
-           
+
+
                 print "took",time.clock()-start,"seconds"
-                    
+
 
 
 lks=          [likelihoods.singleRateCalc,likelihoods.multiRateCalc]
 
-statDb.open()
-
+try:
+    statDb.open()
+except anydbm.error:
+    statDb.create()
 
 makeStats(standardN, rateCountZ,   standardCert,100,lks)
 makeStats(standardN, rateCountV,   standardCert,100,lks[:1])
