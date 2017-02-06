@@ -72,9 +72,9 @@ def probsFromLikelihoods(likelihoods,likelihoodTot):
 # returns a posteriori P(L|E) and a priori P(E) (that is, P(E|L) marginalised over L)
 def probs(counts,locPrior,likelihoodsFunc,dag,doprint=None):
     (ls,lsTot,junk)=likelihoodsFunc(counts,locPrior,dag)
-    if debug: print("al",ls)
+    if debug: print(("al",ls))
     if doprint!=None:
-        print(doprint,ls)
+        print((doprint,ls))
     probs=probsFromLikelihoods(ls,lsTot)
     return (probs,lsTot)
 
@@ -134,7 +134,7 @@ def singleRate(counts,locPrior,dag):
     gs=[]
     gsFound=[]
     gsNFound=[]
-    for i in xrange(len(counts)):
+    for i in range(len(counts)):
         gi=log_g(preds[i],Ts[i]  ,Ds[i]  ,locPrior[i])
         gf=log_g(preds[i],Ts[i]  ,Ds[i]+1,locPrior[i])
         gn=log_g(preds[i],Ts[i]+1,Ds[i],  locPrior[i])
@@ -171,9 +171,9 @@ def multiRate(counts,locPrior,dag):
     ts=[ti for (ti,di) in counts]
     ds=[di for (ti,di) in counts]
 
-    betas1=[logBeta(ds[i]+1,  ts[i]+1  ) for i in xrange(len(locPrior))]
-    betasF=[logBeta(ds[i]+1+1,ts[i]+1  ) for i in xrange(len(locPrior))]
-    betasN=[logBeta(ds[i]+1,  ts[i]+1+1) for i in xrange(len(locPrior))]
+    betas1=[logBeta(ds[i]+1,  ts[i]+1  ) for i in range(len(locPrior))]
+    betasF=[logBeta(ds[i]+1+1,ts[i]+1  ) for i in range(len(locPrior))]
+    betasN=[logBeta(ds[i]+1,  ts[i]+1+1) for i in range(len(locPrior))]
     betas1, betasF, betasN = normalise_likelihoods([betas1, betasF, betasN])
 
     betas=dag.prodAfter(betas1)

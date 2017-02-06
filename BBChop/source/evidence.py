@@ -41,7 +41,7 @@ def entropies(counts,locPrior,likelihoodsObj,dag):
     entropyFunc=entropy.renyi
     currEntropy=entropyFunc(locProbs)
 
-    if debug: print("ac",counts)
+    if debug: print(("ac",counts))
 
     for i in range(len(locProbs)):
         testFound=copy.copy(counts)
@@ -68,7 +68,7 @@ def entropies(counts,locPrior,likelihoodsObj,dag):
 
         findProb=evDProb/evProb
         findProbs.append(findProb)
-        if debug: print("a",eFound,eNotFound,evDProb,probsIfFound)
+        if debug: print(("a",eFound,eNotFound,evDProb,probsIfFound))
 
         # expected entropy after testing at i:
 
@@ -122,7 +122,7 @@ def entropiesFast(counts,locPrior,likelihoodsObj,d):
             eNotFound=0
 
         # expected entropy after testing at i:
-        if debug: print("b",eFound,eNotFound,findProb)
+        if debug: print(("b",eFound,eNotFound,findProb))
 
         eResult=eFound*findProb+eNotFound*(1-findProb)
 
