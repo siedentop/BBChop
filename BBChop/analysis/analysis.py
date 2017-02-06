@@ -71,6 +71,9 @@ def generate_plot(n):
 
 if __name__ == '__main__':
     #generate_plot(1)
-    hosts = [
-    ]
-    save_configs(hosts, get_configs())
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('hosts', metavar='host', type=str, nargs='+',
+                        help='A list of hosts')
+    args = parser.parse_args()
+    save_configs(args.hosts, get_configs())
