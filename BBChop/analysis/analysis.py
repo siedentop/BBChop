@@ -1,3 +1,4 @@
+import json
 from multiprocessing import Pool, cpu_count
 from itertools import product
 
@@ -14,17 +15,13 @@ def dict_product(**kwargs):
     for elem in product(*values):
         yield dict( zip(keys, elem) )
 
-def generate_plot(n):
-    ''' Generate plot '''
-
-    data = []
-    configs = dict_product(N=[10],
-                           #fail_prob=[1., .9, .5, .25, .1, 0.01, 0.005],
-                           fail_prob = [0.2],
+def get_configs():
+    configs = dict_product(N=[10, 100, 1000],
+                           fail_prob=[1., .9, .5, .25, .1, 0.01, 0.005],
                            certainty=[0.9, 0.7],
-                           #fail_loc_func = [lambda N : int(N * 0.7), lambda N : int(N * 0.5)],
-                           fail_loc = [3, 5  ],
-                           seed=range(1, 300))
+                           fail_loc_func = [lambda N : int(N * 0.7), lambda N : int(N * 0.5)],
+                           #fail_loc = [3, 5  ],
+                           seed=range(1, 10))
 
     def apply_fail_loc_fun(gen):
         for d in gen:
@@ -35,7 +32,27 @@ def generate_plot(n):
                 pass
             yield d
     configs = apply_fail_loc_fun(configs)
+    return configs
 
+def save_configs(hostnames, configs):
+
+    n = len(hostnames)
+    configs_splitted = n*[[]]
+
+    # Map each config to the same position
+    for c in configs:
+        h = hash(frozenset(c.values()))
+        i = h % n
+        configs_splitted[i].append(c)
+
+    for i, h in enumerate(hostnames):
+        with open('{}.json'.format(h), 'w') as f:
+            json.dump(configs_splitted[i], f)
+
+def generate_plot(n):
+    ''' Generate plot '''
+
+    configs = get_configs()
     with Pool(cpu_count()) as p:
         data = p.map(run_experiment, configs)
 
@@ -49,10 +66,11 @@ def generate_plot(n):
     except ImportError:
         pass
 
-    import json
     with open('analysis2.json', 'w') as fp:
         json.dump(data, fp)
 
 if __name__ == '__main__':
-    generate_plot(1)
-    
+    #generate_plot(1)
+    hosts = [
+    ]
+    save_configs(hosts, get_configs())
