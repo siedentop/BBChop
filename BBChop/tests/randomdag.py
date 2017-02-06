@@ -121,9 +121,9 @@ def printRel(r,N):
     for i in range(N):
         for j in range(N):
             if (i,j) in r:
-                print("1", end=' ')
+                print("1")
             else: 
-                print("0", end=' ')
+                print("0")
         print() 
 
                

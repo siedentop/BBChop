@@ -37,7 +37,14 @@ print(lsTot)
 
 assert(lsTot > 0)
 
+<<<<<<< HEAD
 likelihoods.probs(counts, locPrior, likelihoods.singleRate ,d)
 
 
 print n
+=======
+# Following line crashes with bug present
+likelihoods.probs(counts, locPrior, likelihoods.singleRate ,d)
+
+print(n)
+>>>>>>> feature/Makefiles
