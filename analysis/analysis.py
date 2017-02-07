@@ -1,10 +1,5 @@
 import json
-from multiprocessing import Pool, cpu_count
 from itertools import product
-
-from experiment import run_experiment
-from plot_results import plot_analysis
-
 
 def dict_product(**kwargs):
     ''' A generator that procudes the cartesian product over the
@@ -35,7 +30,11 @@ def get_configs():
     return configs
 
 def save_configs(hostnames, configs):
+    ''' Assign each config in configs to a hostname from hostnames
+    and save result as 'hostname.json'.
 
+    Implemented so result is stable.
+    '''
     n = len(hostnames)
     configs_splitted = n*[[]]
 
@@ -49,30 +48,9 @@ def save_configs(hostnames, configs):
         with open('{}.json'.format(h), 'w') as f:
             json.dump(configs_splitted[i], f)
 
-def generate_plot(n):
-    ''' Generate plot '''
-
-    configs = get_configs()
-    with Pool(cpu_count()) as p:
-        data = p.map(run_experiment, configs)
-
-    try:
-        import pandas as pd
-
-        data_frame = pd.DataFrame(data)  # Try pd.DataFrame.from_records(d) with >0.16.2
-        print(data_frame)
-
-        plot_analysis(data_frame)
-    except ImportError:
-        pass
-
-    with open('analysis2.json', 'w') as fp:
-        json.dump(data, fp)
-
 if __name__ == '__main__':
-    #generate_plot(1)
     import argparse
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Save configurations to different hosts.')
     parser.add_argument('hosts', metavar='host', type=str, nargs='+',
                         help='A list of hosts')
     args = parser.parse_args()

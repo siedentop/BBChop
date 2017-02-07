@@ -19,7 +19,8 @@ def compute(configs):
     with Pool(cpu_count()) as p:
         data = p.map(run_and_save, configs)
 
-    with open('result_{}.json'.format(datetime.now()), 'w') as fp:
+    h = hash(frozenset(configs.values()))
+    with open('final_result_{:x}.json'.format(h), 'w') as fp:
         json.dump(data, fp)
 
 if __name__ == '__main__':
