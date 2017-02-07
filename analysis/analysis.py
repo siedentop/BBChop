@@ -11,8 +11,8 @@ def dict_product(**kwargs):
         yield dict( zip(keys, elem) )
 
 def get_configs():
-    configs = dict_product(N=[10, 100, 1000],
-                           fail_prob=[1., .9, .5, .25, .1, 0.01, 0.005],
+    configs = dict_product(N=range(100, 1000, 100),
+                           fail_prob=[1., 0.5, 0.1],
                            certainty=[0.9, 0.7],
                            fail_loc_func = [lambda N : int(N * 0.7), lambda N : int(N * 0.5)],
                            #fail_loc = [3, 5  ],
