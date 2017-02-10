@@ -16,7 +16,7 @@
 #    along with BBChop.  If not, see <http://www.gnu.org/licenses/>.
 
 from .listUtils import *
-from .evidence import entropiesFast 
+from .evidence import entropiesFast
 from . import numberType
 import copy
 from . import skipProbability
@@ -41,13 +41,13 @@ debug=False
 
 
 # greedy strategy: always choose the location where the expected gain in entropy
-# for the next observation is highest, ie, the expected entropy after the 
+# for the next observation is highest, ie, the expected entropy after the
 #next observation is smallest.
 
 def greedyStrat(counts,locPrior,likelihoodsObj,dag,skipProbs):
     (currEntropy,entropyResults,findProbs)=entropiesFast(counts,locPrior,likelihoodsObj,dag)
     # test where expected entropy is smallest
-    
+
     expectedGain = [(currEntropy-entropyResults[i])*(numberType.one-skipProbs[i]) for
                     i in range(len(entropyResults))]
     (next,nextp)=findMax(expectedGain)
@@ -74,7 +74,7 @@ def nearlyGreedyStrat(counts,locPrior,likelihoodsObj,dag,skipProbs):
         (currEntropyT,entropyResultsT,findProbsT)=entropiesFast(tcounts,locPrior,likelihoodsObj,dag)
         (nextD,nextED)=findMin(entropyResultsD)
         (nextT,nextET)=findMin(entropyResultsT)
-        
+
         expectedEntropy=findProbs[dloc]*nextED+(1-findProbs[dloc])*nextET
 
 #        print "c %1.2f n %1.02f c-n %1.04f c-e %1.04f fp %1.02f nf %1.02f nt %1.02f" %(currEntropy,nextE,currEntropy-nextE,currEntropy-expectedEntropy,findProbs[dloc],nextED,nextET)
@@ -85,7 +85,7 @@ def nearlyGreedyStrat(counts,locPrior,likelihoodsObj,dag,skipProbs):
 
     else:
         return next
-    
+
 
 
 class BBChop:
@@ -98,7 +98,7 @@ class BBChop:
                  strategy=greedyStrat,
                  skipProbsFunc=skipProbability.skipProbsSimple):
 
-        
+
         self.locPrior=numberType.copyList(locPrior)
         self.certainty=numberType.const(certainty)
         self.counts=[(0,0) for p in locPrior]
@@ -118,18 +118,18 @@ class BBChop:
         t+=negatives
         d+=positives
         self.counts[-1]=(t,d)
-        
+
 
     def addResult(self,location,observation):
         (t,d)=self.counts[location]
-        
+
         # 'None' means we've decided that this location is invalid (eg, won't compile)
         if observation is None:
             self.skipped[location]=True
 
-            # set prior to zero because otherwise termination probability 
-            # cannot always be achieved. This means that 
-            # the probabilities we calculate are conditional on the bug not being located 
+            # set prior to zero because otherwise termination probability
+            # cannot always be achieved. This means that
+            # the probabilities we calculate are conditional on the bug not being located
             # at a skipped location.
 
             self.locPrior[location]=numberType.zero
@@ -138,10 +138,10 @@ class BBChop:
             self.counts[location]=(t,d+1)
         else:
             self.counts[location]=(t+1,d)
-            
+
         if debug:
             print(("ct",self.counts))
-        
+
 
     def search(self):
         (locProbs,evProb)=self.likelihoodsObj.probs(self.counts,self.locPrior,self.dag)
@@ -154,13 +154,13 @@ class BBChop:
             #decide where to seach next
 
             self.interactor.statusCallback(False,whereabouts,maxp,locProbs,self.counts)
-                
+
             next=self.strategy(self.counts,
                                self.locPrior,
                                self.likelihoodsObj,
                                self.dag,
                                self.skipProbs)
-                               
+
 
             observation=self.interactor.test(next)
             self.total+=1
@@ -171,6 +171,7 @@ class BBChop:
 
 
             (locProbs,evProb)=self.likelihoodsObj.probs(self.counts,self.locPrior,self.dag)
+            print(locProbs)
 
 
             if debug:
@@ -178,17 +179,12 @@ class BBChop:
                 print("e",float(entropy(locProbs)),list(map(float,entropyResults)))
                 print("fp",list(map(float,findProbs)))
 
-                
+
             (whereabouts,maxp) = findMax(locProbs)
 
         self.interactor.statusCallback(True,whereabouts,maxp,locProbs,self.counts)
 
-                
+
 
 
         return whereabouts
-
-
-
-
-
